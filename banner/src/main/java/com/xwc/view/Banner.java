@@ -13,19 +13,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by xwc on 2018/2/1.
- */
 public class Banner extends FrameLayout implements ViewPager.OnPageChangeListener {
 
     public String tag = "x_banner";
 
     LoopViewPager viewPager;
     PageIndicator indicator;
+    CircleNavigator circleNavigator;
 
     private Context context;
     private List imageUrls;
@@ -36,9 +37,15 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
     private ImageLoaderInterface imageLoader;
     private OnBannerListener bannerListener;
 
-    private boolean isAutoPlay;
-    private int delayTime = 4000;
 
+    private int circleColor = Color.parseColor("#88ffffff");
+    private int indicatorColor = Color.parseColor("#77000000");
+    private boolean isAutoPlay = true;
+    private int delayTime = 4000;
+    private int scaleType = 1; //imageView scaleType
+    private boolean follow;
+    private int gravity;  //默认居中对齐
+    private int indicatorMargin;
 
     public Banner(Context context) {
         this(context, null);
@@ -73,6 +80,12 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.banner);
         delayTime = typedArray.getInt(R.styleable.banner_delay_time, delayTime);
         isAutoPlay = typedArray.getBoolean(R.styleable.banner_auto_play, isAutoPlay);
+        scaleType = typedArray.getInt(R.styleable.banner_image_scale_type, scaleType);
+        follow = typedArray.getBoolean(R.styleable.banner_follow,follow);
+        gravity = typedArray.getInt(R.styleable.banner_gravity,gravity);
+        indicatorMargin = typedArray.getDimensionPixelSize(R.styleable.banner_indicator_margin,indicatorMargin);
+        circleColor = typedArray.getColor(R.styleable.banner_circle_color,circleColor);
+        indicatorColor = typedArray.getColor(R.styleable.banner_indicator_color,indicatorColor);
         handler = new Handler();
         typedArray.recycle();
 
@@ -99,6 +112,31 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         return this;
     }
 
+
+    public int getCircleColor() {
+        return circleColor;
+    }
+
+    public void setCircleColor(int circleColor) {
+        this.circleColor = circleColor;
+    }
+
+    public int getIndicatorColor() {
+        return indicatorColor;
+    }
+
+    public void setIndicatorColor(int indicatorColor) {
+        this.indicatorColor = indicatorColor;
+    }
+
+    public void setIndicatorMargin(int indicatorMargin) {
+        this.indicatorMargin = indicatorMargin;
+    }
+
+    public int getIndicatorMargin() {
+        return indicatorMargin;
+    }
+
     public Banner setBannerListener(OnBannerListener bannerListener) {
         this.bannerListener = bannerListener;
         return this;
@@ -116,19 +154,48 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
     public void start() {
         setImageList(imageUrls);
         setData();
+        setGravity(gravity);
         startAutoPlay();
     }
+
+    public void setGravity(int gravity){
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2,UIUtil.dip2px(getContext(),30));
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, -1);
+        int margin = UIUtil.dip2px(getContext(), 16);
+            switch (gravity){
+                case 1:
+                    params.setMargins(margin,0,0,0);
+                    indicator.setLayoutParams(params);
+                    break;
+                case 2:
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, -1);
+                    params.setMargins(0,0,margin,0);
+                    indicator.setLayoutParams(params);
+                    break;
+            }
+    }
+
 
     private void setData() {
         viewPager.addOnPageChangeListener(this);
         viewPager.setAdapter(new BannerPagerAdapter(imageViews, bannerListener));
         viewPager.setCurrentItem(1);
-        CircleNavigator circleNavigator = new CircleNavigator(getContext());
+        circleNavigator = new CircleNavigator(this);
+        circleNavigator.setFollowTouch(follow);
         circleNavigator.setCircleCount(imageUrls.size());
-        circleNavigator.setCircleColor(Color.RED);
         indicator.setNavigator(circleNavigator);
-//        LoopViewPager.bindIndicator(indicator, viewPager);
+        setScrollable();
     }
+
+
+    public void setScrollable(){
+        if ( count > 1) {
+            viewPager.setScrollable(true);
+        } else {
+            viewPager.setScrollable(false);
+        }
+    }
+
 
 
     @Override
@@ -152,7 +219,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
             if (isAutoPlay && count > 1) {
                 int currentItem = viewPager.getCurrentItem();
                 Banner.this.currentItem = Banner.this.currentItem % (count + 1) + 1;
-                Log.i(tag, "curr:" + Banner.this.currentItem + " count:" + count + "xwc:" + currentItem);
+                Log.i(tag, "curr:" + Banner.this.currentItem + " count:" + count );
                 if (Banner.this.currentItem == 1) {
                     viewPager.setCurrentItem(Banner.this.currentItem, false);
                     handler.post(task);
@@ -177,8 +244,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
             if (imageView == null) {
                 imageView = new ImageView(context);
             }
-            //TODO setScaleType
-//            setScaleType(imageView);
+            setScaleType(imageView);
             Object url = null;
             if (i == 0) {
                 url = imagesUrl.get(count - 1);
@@ -194,6 +260,40 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
                 Log.e(tag, "Please set images loader.");
         }
     }
+
+    private void setScaleType(View imageView) {
+        if (imageView instanceof ImageView) {
+            ImageView view = ((ImageView) imageView);
+            switch (scaleType) {
+                case 0:
+                    view.setScaleType(ImageView.ScaleType.CENTER);
+                    break;
+                case 1:
+                    view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    break;
+                case 2:
+                    view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    break;
+                case 3:
+                    view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    break;
+                case 4:
+                    view.setScaleType(ImageView.ScaleType.FIT_END);
+                    break;
+                case 5:
+                    view.setScaleType(ImageView.ScaleType.FIT_START);
+                    break;
+                case 6:
+                    view.setScaleType(ImageView.ScaleType.FIT_XY);
+                    break;
+                case 7:
+                    view.setScaleType(ImageView.ScaleType.MATRIX);
+                    break;
+            }
+
+        }
+    }
+
 
     @Override
     public void onPageScrollStateChanged(int state) {
@@ -221,7 +321,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        indicator.onPageScrolled(position - 1, positionOffset, positionOffsetPixels);
+        indicator.onPageScrolled(position-1 , positionOffset, positionOffsetPixels);
     }
 
     @Override

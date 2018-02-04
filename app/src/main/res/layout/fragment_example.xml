@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.xwc.demo.Main2Activity">
+
+
+    <!--
+    默认的数据
+    app:image_scale_type="1"
+    app:auto_play="true"
+    app:delay_time="4000"
+    app:gravity="left"
+    app:follow="true"
+    app:indicator_margin="20dp"
+    app:indicator_color="#77000000"
+    app:circle_color="#88ffffff"-->
+    <com.xwc.view.Banner
+        android:id="@+id/banner"
+        app:gravity="left"
+        app:follow="true"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+</android.support.constraint.ConstraintLayout>

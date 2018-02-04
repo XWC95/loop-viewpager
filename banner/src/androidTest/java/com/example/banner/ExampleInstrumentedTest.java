@@ -1,4 +1,4 @@
-package com.xwc.view;
+package com.example.banner;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.xwc.loopviewpager", appContext.getPackageName());
+        assertEquals("com.example.banner.test", appContext.getPackageName());
     }
 }

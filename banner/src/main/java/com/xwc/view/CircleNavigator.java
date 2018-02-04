@@ -2,6 +2,7 @@ package com.xwc.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
@@ -12,12 +13,11 @@ import android.view.animation.LinearInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
- * Created by xwc on 2018/2/1.
- */
+
 public class CircleNavigator extends View implements IPagerNavigator {
     private int mRadius;
-    private int mCircleColor;
+    private int mCircleColor ;
+    private int mIndicatorColor;
     private int mStrokeWidth;
     private int mCircleSpacing;
     private int mCurrentIndex;
@@ -28,25 +28,36 @@ public class CircleNavigator extends View implements IPagerNavigator {
     private List<PointF> mCirclePoints = new ArrayList<PointF>();
     private float mIndicatorX;
 
-    // 事件回调
     private boolean mTouchable;
     private OnCircleClickListener mCircleClickListener;
     private float mDownX;
     private float mDownY;
     private int mTouchSlop;
 
-    private boolean mFollowTouch = true;    // 是否跟随手指滑动
+    private boolean mFollowTouch = true;
 
-    public CircleNavigator(Context context) {
-        super(context);
-        init(context);
+    private Banner banner;
+
+    public CircleNavigator(Banner banner) {
+        super(banner.getContext());
+        this.banner = banner;
+        init(banner.getContext());
     }
+
 
     private void init(Context context) {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mRadius = UIUtil.dip2px(context, 3);
-        mCircleSpacing = UIUtil.dip2px(context, 8);
-        mStrokeWidth = UIUtil.dip2px(context, 1);
+        if(banner.getIndicatorMargin() == 0){
+            mCircleSpacing = UIUtil.dip2px(context, 8);
+        }else{
+            mCircleSpacing = banner.getIndicatorMargin();
+        }
+
+        mCircleColor = banner.getCircleColor();
+        mIndicatorColor = banner.getIndicatorColor();
+
+//        mStrokeWidth = UIUtil.dip2px(context, 1);
     }
 
     @Override
@@ -92,14 +103,14 @@ public class CircleNavigator extends View implements IPagerNavigator {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mPaint.setColor(mCircleColor);
+
         drawCircles(canvas);
         drawIndicator(canvas);
     }
 
     private void drawCircles(Canvas canvas) {
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(mStrokeWidth);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(mCircleColor);
         for (int i = 0, j = mCirclePoints.size(); i < j; i++) {
             PointF pointF = mCirclePoints.get(i);
             canvas.drawCircle(pointF.x, pointF.y, mRadius, mPaint);
@@ -108,6 +119,7 @@ public class CircleNavigator extends View implements IPagerNavigator {
 
     private void drawIndicator(Canvas canvas) {
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(mIndicatorColor);
         if (mCirclePoints.size() > 0) {
             canvas.drawCircle(mIndicatorX, (int) (getHeight() / 2.0f + 0.5f), mRadius, mPaint);
         }
@@ -137,6 +149,12 @@ public class CircleNavigator extends View implements IPagerNavigator {
 
             int currentPosition = Math.min(mCirclePoints.size() - 1, position);
             int nextPosition = Math.min(mCirclePoints.size() - 1, position + 1);
+
+            if (currentPosition < 0) {
+                currentPosition = mCirclePoints.size() - 1;
+            }
+
+
             PointF current = mCirclePoints.get(currentPosition);
             PointF next = mCirclePoints.get(nextPosition);
 
@@ -184,7 +202,13 @@ public class CircleNavigator extends View implements IPagerNavigator {
     @Override
     public void onPageSelected(int position) {
         mCurrentIndex = position;
+        if(mCirclePoints.size() == 0){
+            return;
+        }
         if (!mFollowTouch) {
+            if (mCurrentIndex == mCirclePoints.size() || mCurrentIndex < 0) {
+                mCurrentIndex = 0;
+            }
             mIndicatorX = mCirclePoints.get(mCurrentIndex).x;
             invalidate();
         }
@@ -225,6 +249,10 @@ public class CircleNavigator extends View implements IPagerNavigator {
 
     public int getCircleColor() {
         return mCircleColor;
+    }
+
+    public void setIndicatorColor(int indicatorColor) {
+        mIndicatorColor = indicatorColor;
     }
 
     public void setCircleColor(int circleColor) {

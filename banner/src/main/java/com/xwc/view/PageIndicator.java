@@ -5,10 +5,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-/**
- * Created by xwc on 2018/2/1.
- */
-
 public class PageIndicator extends FrameLayout {
     private IPagerNavigator mNavigator;
 

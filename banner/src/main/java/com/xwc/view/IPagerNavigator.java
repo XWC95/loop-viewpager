@@ -1,8 +1,5 @@
 package com.xwc.view;
 
-/**
- * Created by xwc on 2018/2/1.
- */
 public interface IPagerNavigator {
     ///////////////////////// ViewPager的3个回调
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);

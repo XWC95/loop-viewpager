@@ -6,10 +6,6 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 2018/2/2.
- */
-
 public class BannerPagerAdapter extends PagerAdapter {
 
     private List<View> imageViews;

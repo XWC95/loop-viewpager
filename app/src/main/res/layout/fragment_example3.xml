@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.xwc.view.Main2Activity">
-
+    tools:context="com.xwc.demo.Main2Activity">
 
     <com.xwc.view.Banner
+        app:gravity="right"
+        app:indicator_margin="20dp"
         android:id="@+id/banner"
+        app:indicator_color="#000"
+        app:circle_color="#F00"
+        app:image_scale_type="6"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:auto_play="true" />
+        android:layout_height="200dp" />
 
 </android.support.constraint.ConstraintLayout>

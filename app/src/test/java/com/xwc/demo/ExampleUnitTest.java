@@ -1,4 +1,4 @@
-package com.xwc.view;
+package com.xwc.demo;
 
 import org.junit.Test;
 
