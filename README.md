@@ -79,4 +79,4 @@ indicator_margin         | 指示器之间距离        | 8dp
 circle_color         | 指示器默认颜色        | #88FFFFFF
 indicator_color         | 指示器选中颜色        | #77000000
 
-<a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=947017886@qq.com" >联系邮箱</a>
+<a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=947017886@qq.com" >## 联系邮箱</a>
