@@ -1,8 +1,9 @@
 # android-banner
 
+[![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 一个蝇量级的viewpager无线轮播控件并带指示器，简约而不简单。非常好用！！！
-<br>
+
 ## 效果图
 <img src="/gif/app.gif" width="280px"/>
 
