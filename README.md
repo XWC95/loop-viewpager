@@ -7,9 +7,8 @@
 <img src="/gif/app.gif" width="280px"/>
 
 ## How to use
-1、build.gradle
 
-#### Step 1.依赖
+#### Step 1.build.gradle
 Gradle 
 ```
 compile 'com.xwc:banner:1.0.3' //最新版本
