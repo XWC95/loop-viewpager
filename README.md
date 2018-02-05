@@ -9,7 +9,6 @@
 ## How to use
 
 #### Step 1.build.gradle
-Gradle 
 ```
 compile 'com.xwc:banner:1.0.3' //最新版本
 
