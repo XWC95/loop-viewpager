@@ -5,16 +5,18 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -68,7 +70,6 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         View view = LayoutInflater.from(context).inflate(R.layout.view_banner, this, true);
         viewPager = view.findViewById(R.id.viewpager);
         indicator = view.findViewById(R.id.pager_indicator);
-
         handleTypeArray(context, attrs);
     }
 
@@ -81,11 +82,11 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         delayTime = typedArray.getInt(R.styleable.banner_delay_time, delayTime);
         isAutoPlay = typedArray.getBoolean(R.styleable.banner_auto_play, isAutoPlay);
         scaleType = typedArray.getInt(R.styleable.banner_image_scale_type, scaleType);
-        follow = typedArray.getBoolean(R.styleable.banner_follow,follow);
-        gravity = typedArray.getInt(R.styleable.banner_gravity,gravity);
-        indicatorMargin = typedArray.getDimensionPixelSize(R.styleable.banner_indicator_margin,indicatorMargin);
-        circleColor = typedArray.getColor(R.styleable.banner_circle_color,circleColor);
-        indicatorColor = typedArray.getColor(R.styleable.banner_indicator_color,indicatorColor);
+        follow = typedArray.getBoolean(R.styleable.banner_follow, follow);
+        gravity = typedArray.getInt(R.styleable.banner_gravity, gravity);
+        indicatorMargin = typedArray.getDimensionPixelSize(R.styleable.banner_indicator_margin, indicatorMargin);
+        circleColor = typedArray.getColor(R.styleable.banner_circle_color, circleColor);
+        indicatorColor = typedArray.getColor(R.styleable.banner_indicator_color, indicatorColor);
         handler = new Handler();
         typedArray.recycle();
 
@@ -158,27 +159,27 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         startAutoPlay();
     }
 
-    public void setGravity(int gravity){
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2,UIUtil.dip2px(getContext(),30));
+    public void setGravity(int gravity) {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, UIUtil.dip2px(getContext(), 30));
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, -1);
         int margin = UIUtil.dip2px(getContext(), 16);
-            switch (gravity){
-                case 1:
-                    params.setMargins(margin,0,0,0);
-                    indicator.setLayoutParams(params);
-                    break;
-                case 2:
-                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, -1);
-                    params.setMargins(0,0,margin,0);
-                    indicator.setLayoutParams(params);
-                    break;
-            }
+        switch (gravity) {
+            case 1:
+                params.setMargins(margin, 0, 0, 0);
+                indicator.setLayoutParams(params);
+                break;
+            case 2:
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, -1);
+                params.setMargins(0, 0, margin, 0);
+                indicator.setLayoutParams(params);
+                break;
+        }
     }
 
 
     private void setData() {
         viewPager.addOnPageChangeListener(this);
-        viewPager.setAdapter(new BannerPagerAdapter(imageViews, bannerListener));
+        viewPager.setAdapter(new BannerPagerAdapter(imageViews));
         viewPager.setCurrentItem(1);
         circleNavigator = new CircleNavigator(this);
         circleNavigator.setFollowTouch(follow);
@@ -188,14 +189,13 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
     }
 
 
-    public void setScrollable(){
-        if ( count > 1) {
+    public void setScrollable() {
+        if (count > 1) {
             viewPager.setScrollable(true);
         } else {
             viewPager.setScrollable(false);
         }
     }
-
 
 
     @Override
@@ -219,7 +219,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
             if (isAutoPlay && count > 1) {
                 int currentItem = viewPager.getCurrentItem();
                 Banner.this.currentItem = Banner.this.currentItem % (count + 1) + 1;
-                Log.i(tag, "curr:" + Banner.this.currentItem + " count:" + count );
+                Log.i(tag, "curr:" + Banner.this.currentItem + " count:" + count);
                 if (Banner.this.currentItem == 1) {
                     viewPager.setCurrentItem(Banner.this.currentItem, false);
                     handler.post(task);
@@ -321,7 +321,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        indicator.onPageScrolled(position-1 , positionOffset, positionOffsetPixels);
+        indicator.onPageScrolled(position - 1, positionOffset, positionOffsetPixels);
     }
 
     @Override
@@ -329,4 +329,46 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
         indicator.onPageSelected(position - 1);
     }
 
+
+
+    public class BannerPagerAdapter extends PagerAdapter {
+
+        private List<View> imageViews;
+
+        public BannerPagerAdapter(List<View> imageViews) {
+            this.imageViews = imageViews;
+        }
+
+        @Override
+        public int getCount() {
+            return imageViews.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, final int position) {
+            container.addView(imageViews.get(position));
+            View view = imageViews.get(position);
+            if (bannerListener != null) {
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bannerListener.OnBannerClick(position - 1);
+                    }
+                });
+            }
+
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+    }
 }

@@ -35,7 +35,6 @@ public class Example3Fragment extends Fragment {
 
         List<Integer> pictures = new ArrayList<>();
         pictures.add(R.mipmap.page1);
-
         banner.setImageUrls(pictures)
                 .setImageLoader(new GlideImageLoader())
                 .setBannerListener(new OnBannerListener() {
@@ -45,6 +44,8 @@ public class Example3Fragment extends Fragment {
                     }
                 })
                 .start();
+
+
     }
 
     @Override

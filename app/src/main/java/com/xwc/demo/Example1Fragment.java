@@ -48,6 +48,14 @@ public class Example1Fragment extends Fragment {
                     }
                 })
                 .start();
+
+        banner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),"OK",Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     @Override

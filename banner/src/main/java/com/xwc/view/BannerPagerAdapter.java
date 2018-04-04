@@ -1,8 +1,10 @@
 package com.xwc.view;
 
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ public class BannerPagerAdapter extends PagerAdapter {
     private OnBannerListener listener;
 
     public BannerPagerAdapter(List<View> imageViews, OnBannerListener listener) {
+
         this.imageViews = imageViews;
         this.listener = listener;
     }
@@ -30,14 +33,16 @@ public class BannerPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         container.addView(imageViews.get(position));
         View view = imageViews.get(position);
-        if (listener != null) {
+        if(listener != null){
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.OnBannerClick(position-1);
+                    Toast.makeText(v.getContext(),"111",Toast.LENGTH_SHORT).show();
+                    listener.OnBannerClick(position - 1);
                 }
             });
         }
+
         return view;
     }
 
