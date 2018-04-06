@@ -1,12 +1,15 @@
 language: android
 jdk: oraclejdk8
 sudo: false
+script: ./gradlew build
 android:
   components:
-    = platform-tools
+    - platform-tools
     - tools
     - build-tools-27.0.2
     - android-27
     - extra-android-m2repository
 
-script: ./gradlew build
+
+
+
