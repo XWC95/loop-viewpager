@@ -1,19 +1,12 @@
 language: android
 jdk: oraclejdk8
 sudo: false
-script: ./gradlew build
 android:
   components:
-
-    - build-tools-26.0.2
-
-    - android-26
-
-    - extra-google-google_play_services
-    - extra-google-m2repository
+    = platform-tools
+    - tools
+    - build-tools-27.0.2
+    - android-27
     - extra-android-m2repository
-    - addon-google_apis-google-26
 
-    - sys-img-armeabi-v7a-android-26
-    - sys-img-armeabi-v7a-android-17
-
+script: ./gradlew build
