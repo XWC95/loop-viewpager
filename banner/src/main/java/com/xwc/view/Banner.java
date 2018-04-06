@@ -353,6 +353,7 @@ public class Banner extends FrameLayout implements ViewPager.OnPageChangeListene
             container.addView(imageViews.get(position));
             View view = imageViews.get(position);
             if (bannerListener != null) {
+
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
