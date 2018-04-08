@@ -11,7 +11,7 @@
 
 #### Step 1.build.gradle
 ```
-compile 'com.xwc:banner:1.0.3' //最新版本
+compile 'com.github.xwc:banner:1.0.0' //最新版本
 
 ```
 
